@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block page_content %}
+<style>
+.panel-body {
+    display: flex;
+    justify-content: space-between; /* 水平方向上平均分布 */
+    align-items: center; /* 垂直方向上居中对齐 */
+    height: 200px;
+  }
+.form-group {
+    width: 100px;
+    height: 10px;
+    background-color: lightgray;
+    border: 1px solid gray;
+    text-align: center;
+    line-height: 50px;
+  }
+  table {
+    width: 50%; /* 控制表格宽度 */
+    margin: auto; /* 将表格居中 */
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: center; /* 将文字居中 */
+    border: 1px solid black; /* 添加边框 */
+    padding: 10px; /* 添加内边距 */
+  }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading" style="font-size: 25px">GMM算法在vertical federated learning环境下的性能</div>
+        <div class="panel-body">
+            <div class="container navbar-left">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/" style="font-size: 20px">返回主页</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/vertical_kmeans" style="font-size: 20px;margin-left: 25px"> k-means</a></li>
+                        <li><a href="/vertical_gmm" style="font-size: 20px;margin-left: 25px">GMM</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<div class="panel-body">
+    <!-- get请求示例 -->
+    <form action="/vertical_gmm" method="get">
+        <div class="start_feature">
+            <label for="start_feature5">请输入csv文件中特征起始列:</label>
+            <input type="text" class="form-control" id="start_feature5" name="start_feature5" value="{{start_feature5}}">
+            <br>
+            <label for="end_feature5">请输入csv文件中特征结束列:</label>
+            <input type="text" class="form-control" id="end_feature5" name="end_feature5" value="{{end_feature5}}">
+            <label for="start_feature4">注：csv文件中起始列数为0</label>
+        </div>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
+</div>
+
+
+
+<tr></tr>
+<div class="panel-body" style="display: flex;justify-content: space-between;   align-items: center;   height: 1500px;font-size: 25px;border-top: 30px">
+    <div class="form-group" style=" width: 300px; height : 1500px; background-color: lightgray;border: 1px solid gray;text-align: center;line-height: 70px;">设备A
+        <div style="line-height: 50px;font-size: 20px">设备A的聚类中心:</div>
+        <table style="border-collapse: collapse;width: 100%;">
+            {% for item in device1_means %}
+              <tr  style="font-size: 10px">
+                <td>{{ item }}</td>
+              </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <div style="line-height: 50px;font-size: 20px">设备A的协方差矩阵:</div>
+        <table style="border-collapse: collapse;width: 100%;">
+            {% for item in device1_covariances %}
+              <tr  style="font-size: 10px">
+                <td>{{ item }}</td>
+              </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="form-group" style="width: 500px; height : 1500px; background-color: lightgray;border: 1px solid gray;text-align: center;line-height: 70px;">horizontal federated learning
+        <div style="line-height: 50px;font-size: 20px">纵向联邦学习下最优性能时的全局聚类中心:</div>
+        <table style="border-collapse: collapse;width: 100%;">
+            {% for item in final_global_means %}
+              <tr  style="font-size: 10px">
+                <td>{{ item }}</td>
+              </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <div style="line-height: 50px;font-size: 20px">纵向联邦学习下最优性能时的协方差矩阵:</div>
+        <table style="border-collapse: collapse;width: 100%;">
+            {% for item in final_global_covariances %}
+              <tr  style="font-size: 10px">
+                <td>{{ item }}</td>
+              </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="form-group" style="width: 300px; height : 1500px; background-color: lightgray;border: 1px solid gray;text-align: center;line-height: 70px;">设备B
+        <div style="line-height: 50px;font-size: 20px">设备B的聚类中心:</div>
+        <table style="border-collapse: collapse;width: 100%;">
+            {% for item in device2_means %}
+              <tr  style="font-size: 10px">
+                <td>{{ item }}</td>
+              </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <div style="line-height: 50px;font-size: 20px">设备B的协方差矩阵:</div>
+        <table style="border-collapse: collapse;width: 100%;">
+            {% for item in device2_covariances %}
+              <tr  style="font-size: 10px">
+                <td>{{ item }}</td>
+              </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading" style="font-size: 25px;text-align: center;">轮廓系数对比</div>
+    <table>
+        <thead>
+        <tr>
+          <th>描述</th>
+          <th>轮廓系数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>纵向联邦学习第1轮</td>
+          <td>{{scores[0]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第2轮</td>
+          <td>{{scores[1]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第3轮</td>
+          <td>{{scores[2]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第4轮</td>
+          <td>{{scores[3]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第5轮</td>
+          <td>{{scores[4]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第6轮</td>
+          <td>{{scores[5]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第7轮</td>
+          <td>{{scores[6]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第8轮</td>
+          <td>{{scores[7]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第9轮</td>
+          <td>{{scores[8]}}</td>
+        </tr>
+        <tr>
+          <td>纵向联邦学习第10轮</td>
+          <td>{{scores[9]}}</td>
+        </tr>
+        <tr>
+          <td>设备A</td>
+          <td>{{device1_score}}</td>
+        </tr>
+        <tr>
+          <td>设备B</td>
+          <td>{{device2_score}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

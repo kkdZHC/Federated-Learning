@@ -1,0 +1,44 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}基于联邦学习的无监督聚类算法的测试和验证{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon " type="images/x-icon" href="{{url_for('static',filename='img/favicon.ico')}}">
+<link rel="icon" href="{{url_for('static',filename='img/favicon.ico')}}" type="images/x-icon">
+<!-- 如果不需要图标可以将上面两句删了，或者找自己的图标替换 -->
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+</script>
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse " role="navigation">
+    <div class="container navbar-left">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">基于联邦学习的无监督聚类算法的测试和验证</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/horizontal">horizontal federated learning</a></li>
+                <li><a href="/vertical">vertical federated learning</a></li>
+                <li><a href="/transfer">federated transfer learning</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+
+</div>
+
+{% endblock %}
